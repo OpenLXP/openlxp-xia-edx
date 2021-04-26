@@ -4,7 +4,7 @@ import logging
 from core.management.utils.xia_internal import get_source_metadata_key_value
 from core.management.utils.xsr_client import read_source_file
 from core.management.utils.xss_client import get_publisher_detail
-from core.models import MetadataLedger, XIAConfiguration
+from core.models import MetadataLedger
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
