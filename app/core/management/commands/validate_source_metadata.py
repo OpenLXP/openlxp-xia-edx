@@ -1,14 +1,13 @@
 import logging
 
-from django.core.management.base import BaseCommand
-from django.utils import timezone
-
 from core.management.utils.xia_internal import (dict_flatten, get_key_dict,
                                                 get_source_metadata_key_value,
                                                 required_recommended_logs)
 from core.management.utils.xss_client import (
     get_required_fields_for_validation, get_source_validation_schema)
 from core.models import MetadataLedger
+from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 logger = logging.getLogger('dict_config_logger')
 
@@ -17,8 +16,7 @@ def get_source_metadata_for_validation():
     """Retrieving source metadata from MetadataLedger that needs to be
         validated"""
     logger.info(
-        "Accessing source metadata from MetadataLedger that needs to be "
-        "validated")
+        "Accessing source metadata from MetadataLedger to be validated")
     source_data_dict = MetadataLedger.objects.values(
         'source_metadata').filter(source_metadata_validation_status='',
                                   record_lifecycle_status='Active'
@@ -46,7 +44,8 @@ def validate_source_using_key(source_data_dict, required_column_list,
                               recommended_column_list):
     """Validating source data against required & recommended column names"""
 
-    logger.info("Validating source data against required column names")
+    logger.info("Validating and updating records in MetadataLedger table for "
+                "Source data")
     len_source_metadata = len(source_data_dict)
     for ind in range(len_source_metadata):
         # Updating default validation for all records

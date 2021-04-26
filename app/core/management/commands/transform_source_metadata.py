@@ -2,9 +2,6 @@ import hashlib
 import logging
 
 import pandas as pd
-from django.core.management.base import BaseCommand
-from django.utils import timezone
-
 from core.management.utils.xia_internal import (dict_flatten,
                                                 get_target_metadata_key_value,
                                                 replace_field_on_target_schema)
@@ -12,6 +9,8 @@ from core.management.utils.xss_client import (
     get_required_fields_for_validation, get_source_validation_schema,
     get_target_metadata_for_transformation)
 from core.models import MetadataLedger
+from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 logger = logging.getLogger('dict_config_logger')
 
@@ -20,8 +19,7 @@ def get_source_metadata_for_transformation():
     """Retrieving Source metadata from MetadataLedger that needs to be
         transformed"""
     logger.info(
-        "Retrieving source metadata from MetadataLedger that needs to be "
-        "transformed")
+        "Retrieving source metadata from MetadataLedger to be transformed")
     source_data_dict = MetadataLedger.objects.values(
         'source_metadata').filter(
         source_metadata_validation_status='Y',

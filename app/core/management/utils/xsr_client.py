@@ -38,22 +38,27 @@ def get_xsr_api_response():
 
 
 def extract_source():
-    """function to connect to edX endpoint API and get source metadata"""
+    """Function to connect to edX endpoint API and get source metadata"""
 
     resp = get_xsr_api_response()
     source_data_dict = json.loads(resp.text)
 
+    logger.debug("Sending source data from endpoint API")
     return source_data_dict['results']
 
 
 def read_source_file():
-    """sending source data in dataframe format"""
+    """Sending source data in dataframe format"""
     logger.info("Retrieving data from XSR")
-    # load rss from web to convert to xml
+
+    # Function call to extract data from source repository
     xsr_items = extract_source()
+
     # convert xsr dictionary list to Dataframe
     source_df = pd.DataFrame(xsr_items)
-    logger.info("Changing null values to None for source dataframe")
+
+    # Changing null values to None for source dataframe
     std_source_df = source_df.where(pd.notnull(source_df),
                                     None)
+    logger.debug("Sending source data in dataframe format for EVTVL")
     return std_source_df

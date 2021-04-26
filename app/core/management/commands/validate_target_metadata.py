@@ -1,14 +1,13 @@
 import logging
 
-from django.core.management.base import BaseCommand
-from django.utils import timezone
-
 from core.management.utils.xia_internal import (dict_flatten, get_key_dict,
                                                 get_target_metadata_key_value,
                                                 required_recommended_logs)
 from core.management.utils.xss_client import (
     get_required_fields_for_validation, get_target_validation_schema)
 from core.models import MetadataLedger
+from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 logger = logging.getLogger('dict_config_logger')
 
@@ -17,8 +16,7 @@ def get_target_metadata_for_validation():
     """Retrieving target metadata from MetadataLedger that needs to be
         validated"""
     logger.info(
-        "Accessing target metadata from MetadataLedger that needs to be "
-        "validated")
+        "Accessing target metadata from MetadataLedger to be validated")
     target_data_dict = MetadataLedger.objects.values(
         'target_metadata').filter(target_metadata_validation_status='',
                                   record_lifecycle_status='Active'
@@ -43,7 +41,8 @@ def validate_target_using_key(target_data_dict, required_column_list,
                               recommended_column_list):
     """Validating target data against required & recommended column names"""
 
-    logger.info('Validating and updating records in MetadataLedger table')
+    logger.info('Validating and updating records in MetadataLedger table for '
+                'target data')
     len_target_metadata = len(target_data_dict)
     for ind in range(len_target_metadata):
         # Updating default validation for all records

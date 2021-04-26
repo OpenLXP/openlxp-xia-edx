@@ -2,12 +2,6 @@ import logging
 from unittest.mock import patch
 
 import pandas as pd
-from ddt import ddt
-from django.core.management import call_command
-from django.db.utils import OperationalError
-from django.test import tag
-from django.utils import timezone
-
 from core.management.commands.extract_source_metadata import (
     add_publisher_to_source, extract_metadata_using_key, get_publisher_detail,
     get_source_metadata)
@@ -22,6 +16,11 @@ from core.management.commands.validate_source_metadata import (
 from core.management.commands.validate_target_metadata import (
     get_target_metadata_for_validation, validate_target_using_key)
 from core.models import MetadataLedger, XIAConfiguration
+from ddt import ddt
+from django.core.management import call_command
+from django.db.utils import OperationalError
+from django.test import tag
+from django.utils import timezone
 
 from .test_setup import TestSetUp
 

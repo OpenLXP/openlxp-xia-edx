@@ -2,22 +2,15 @@ import json
 import logging
 
 import requests
+from core.management.utils.xis_client import response_from_xis
+from core.management.utils.xss_client import get_publisher_detail
+from core.models import MetadataLedger, XIAConfiguration
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 from django.utils import timezone
 
-from core.management.utils.xis_client import response_from_xis
-from core.models import MetadataLedger, XIAConfiguration
-
 logger = logging.getLogger('dict_config_logger')
-
-
-def get_publisher_to_add():
-    """Retrieve publisher from XIA configuration """
-    xia_data = XIAConfiguration.objects.first()
-    publisher = xia_data.publisher
-    return publisher
 
 
 def renaming_xia_for_posting_to_xis(data):
@@ -28,7 +21,7 @@ def renaming_xia_for_posting_to_xis(data):
     data['metadata_key'] = data.pop('target_metadata_key')
     data['metadata_key_hash'] = data.pop('target_metadata_key_hash')
     # Adding Publisher in the list to POST to XIS
-    data['provider_name'] = get_publisher_to_add()
+    data['provider_name'] = get_publisher_detail()
     return data
 
 
