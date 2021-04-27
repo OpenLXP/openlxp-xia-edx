@@ -3,10 +3,10 @@ name: Docker CD
 on:
   push:
     branches: 
-      - main
+      - feature/regration_testing
   pull_request:
     branches: 
-      - main
+      - feature/regration_testing
 
 jobs:
   build:
