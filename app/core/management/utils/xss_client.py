@@ -2,6 +2,7 @@ import json
 import logging
 
 import boto3
+
 from core.management.utils.xia_internal import dict_flatten
 from core.models import XIAConfiguration
 
@@ -23,14 +24,6 @@ def read_json_data(file_name):
     json_content = json_path.get()['Body'].read().decode('utf-8')
     data_dict = json.loads(json_content)
     return data_dict
-
-
-def get_publisher_detail():
-    """Retrieve publisher from XIA configuration """
-    logger.debug("Retrieve publisher from XIA configuration")
-    xia_data = XIAConfiguration.objects.first()
-    publisher = xia_data.publisher
-    return publisher
 
 
 def get_source_validation_schema():

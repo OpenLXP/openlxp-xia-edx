@@ -2,9 +2,14 @@ import logging
 from unittest.mock import patch
 
 import pandas as pd
+from ddt import ddt
+from django.core.management import call_command
+from django.db.utils import OperationalError
+from django.test import tag
+from django.utils import timezone
+
 from core.management.commands.extract_source_metadata import (
-    add_publisher_to_source, extract_metadata_using_key,
-    get_source_metadata)
+    add_publisher_to_source, extract_metadata_using_key, get_source_metadata)
 from core.management.commands.load_target_metadata import (
     check_records_to_load_into_xis, post_data_to_xis,
     renaming_xia_for_posting_to_xis)
@@ -16,11 +21,6 @@ from core.management.commands.validate_source_metadata import (
 from core.management.commands.validate_target_metadata import (
     get_target_metadata_for_validation, validate_target_using_key)
 from core.models import MetadataLedger, XIAConfiguration
-from ddt import ddt
-from django.core.management import call_command
-from django.db.utils import OperationalError
-from django.test import tag
-from django.utils import timezone
 
 from .test_setup import TestSetUp
 
@@ -64,9 +64,9 @@ class CommandTests(TestSetUp):
     def test_add_publisher_to_source(self):
         """Test for Add publisher column to source metadata and return
         source metadata"""
-        with patch('core.management.utils.xss_client'
+        with patch('core.management.utils.xia_internal'
                    '.get_publisher_detail'), \
-                patch('core.management.utils.xss_client'
+                patch('core.management.utils.xia_internal'
                       '.XIAConfiguration.objects') as xisCfg:
             xiaConfig = XIAConfiguration(publisher='edX')
             xisCfg.first.return_value = xiaConfig
@@ -314,9 +314,9 @@ class CommandTests(TestSetUp):
 
     def test_renaming_xia_for_posting_to_xis(self):
         """Test for Renaming XIA column names to match with XIS column names"""
-        with patch('core.management.utils.xss_client'
+        with patch('core.management.utils.xia_internal'
                    '.get_publisher_detail'), \
-                patch('core.management.utils.xss_client'
+                patch('core.management.utils.xia_internal'
                       '.XIAConfiguration.objects') as xisCfg:
             xiaConfig = XIAConfiguration(publisher='edX')
             xisCfg.first.return_value = xiaConfig
@@ -379,9 +379,9 @@ class CommandTests(TestSetUp):
         with patch('core.management.commands.load_target_metadata'
                    '.renaming_xia_for_posting_to_xis',
                    return_value=self.xis_expected_data), \
-                patch('core.management.utils.xss_client'
+                patch('core.management.utils.xia_internal'
                       '.get_publisher_detail'), \
-                patch('core.management.utils.xss_client'
+                patch('core.management.utils.xia_internal'
                       '.XIAConfiguration.objects') as xiaCfg, \
                 patch('core.management.commands.load_target_metadata'
                       '.MetadataLedger.objects') as meta_obj, \
@@ -412,9 +412,9 @@ class CommandTests(TestSetUp):
         with patch('core.management.commands.load_target_metadata'
                    '.renaming_xia_for_posting_to_xis',
                    return_value=self.xis_expected_data), \
-                patch('core.management.utils.xss_client'
+                patch('core.management.utils.xia_internal'
                       '.get_publisher_detail'), \
-                patch('core.management.utils.xss_client'
+                patch('core.management.utils.xia_internal'
                       '.XIAConfiguration.objects') as xiaCfg, \
                 patch('core.management.commands.load_target_metadata'
                       '.MetadataLedger.objects') as meta_obj, \

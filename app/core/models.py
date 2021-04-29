@@ -12,7 +12,7 @@ class XIAConfiguration(models.Model):
                                            'data from.')
     source_metadata_schema = models.CharField(
         default='edX_source_validate_schema.json', max_length=200,
-        help_text='Enter the dau '
+        help_text='Enter the edX '
                   'schema file')
     source_target_mapping = models.CharField(
         default='edX_p2881_target_metadata_schema.json', max_length=200,
