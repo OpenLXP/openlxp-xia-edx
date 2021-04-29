@@ -2,8 +2,8 @@ from django.contrib import admin
 
 from .models import XIAConfiguration
 
-
 # Register your models here.
+
 
 @admin.register(XIAConfiguration)
 class XIAConfigurationAdmin(admin.ModelAdmin):

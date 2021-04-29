@@ -1,6 +1,7 @@
-from core.models import MetadataLedger, XIAConfiguration
 from django.test import SimpleTestCase, tag
 from django.utils import timezone
+
+from core.models import MetadataLedger, XIAConfiguration
 
 
 @tag('unit')

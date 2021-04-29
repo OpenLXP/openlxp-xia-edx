@@ -1,6 +1,10 @@
 import logging
 from unittest.mock import patch
 
+from ddt import ddt
+from django.test import tag
+from django.utils import timezone
+
 from core.management.commands.extract_source_metadata import (
     extract_metadata_using_key, get_publisher_detail, store_source_metadata)
 from core.management.commands.load_target_metadata import (
@@ -14,9 +18,6 @@ from core.management.commands.validate_target_metadata import (
     get_target_validation_schema, validate_target_using_key)
 from core.management.utils.xss_client import read_json_data
 from core.models import MetadataLedger, XIAConfiguration
-from ddt import ddt
-from django.test import tag
-from django.utils import timezone
 
 from .test_setup import TestSetUp
 

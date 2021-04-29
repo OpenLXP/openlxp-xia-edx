@@ -3,6 +3,9 @@ import logging
 from unittest.mock import patch
 
 import pandas as pd
+from ddt import data, ddt, unpack
+from django.test import tag
+
 from core.management.utils.xia_internal import (dict_flatten,
                                                 flatten_dict_object,
                                                 flatten_list_object,
@@ -16,12 +19,10 @@ from core.management.utils.xsr_client import (get_xsr_api_endpoint,
                                               get_xsr_api_response,
                                               read_source_file)
 from core.management.utils.xss_client import (
-    get_aws_bucket_name, get_required_fields_for_validation,
-    get_source_validation_schema, get_target_metadata_for_transformation,
-    get_target_validation_schema, get_publisher_detail)
+    get_aws_bucket_name, get_publisher_detail,
+    get_required_fields_for_validation, get_source_validation_schema,
+    get_target_metadata_for_transformation, get_target_validation_schema)
 from core.models import XIAConfiguration
-from ddt import data, ddt, unpack
-from django.test import tag
 
 from .test_setup import TestSetUp
 
