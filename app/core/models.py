@@ -40,6 +40,14 @@ class XIAConfiguration(models.Model):
         return super(XIAConfiguration, self).save(*args, **kwargs)
 
 
+class EmailConfiguration(models.Model):
+    """Model for Email Configuration """
+
+    email_address = models.EmailField(
+        max_length=254,
+        help_text='Enter email personas addresses to send log data')
+
+
 class MetadataLedger(models.Model):
     """Model for MetadataLedger """
 
