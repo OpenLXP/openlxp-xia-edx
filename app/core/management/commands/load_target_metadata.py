@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 
 import requests
 from django.core.management.base import BaseCommand
@@ -10,7 +9,8 @@ from django.utils import timezone
 
 from core.management.utils.xia_internal import get_publisher_detail
 from core.management.utils.xis_client import response_from_xis
-from core.models import MetadataLedger
+from core.management.utils.notification import send_notifications
+from core.models import MetadataLedger, EmailConfiguration
 from django.core.mail import EmailMessage
 
 logger = logging.getLogger('dict_config_logger')
@@ -98,14 +98,9 @@ def check_records_to_load_into_xis():
 
 
 def send_log_email():
-    """This function sends email of a log file """
-    logger.info('Inside the send_log_email function')
-    email = EmailMessage(
-        'log file attached', 'please check attached file', os.environ.get('DJANGO_SUPERUSER_EMAIL'),
-        ['example2@gmail.com'])
-    email.attach_file('/opt/app/openlxp-xia-edx/core/management/logs/debug.log')
-    email.send()
-    logger.info('Email sent')
+    email_data = EmailConfiguration.objects.first()
+    email = email_data.email_address
+    send_notifications(email)
 
 
 class Command(BaseCommand):

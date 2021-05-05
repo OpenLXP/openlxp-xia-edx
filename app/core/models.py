@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.forms import ValidationError
 from django.urls import reverse
+from core.management.utils.notification import email_verification
 
 
 class XIAConfiguration(models.Model):
@@ -47,6 +48,9 @@ class EmailConfiguration(models.Model):
         max_length=254,
         help_text='Enter email personas addresses to send log data')
 
+    def save(self, *args, **kwargs):
+        email_verification(self.email_address)
+        return super(EmailConfiguration, self).save(*args, **kwargs)
 
 class MetadataLedger(models.Model):
     """Model for MetadataLedger """
