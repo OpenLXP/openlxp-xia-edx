@@ -18,7 +18,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -31,7 +30,6 @@ DEBUG = True
 mimetypes.add_type("text/css", ".css", True)
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -76,7 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'openlxp_xia_edx_project.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -99,6 +96,13 @@ REST_FRAMEWORK = {
     ]
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIT_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('DJANGO_SUPERUSER_EMAIL')
+EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -117,7 +121,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -131,7 +134,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
@@ -144,7 +146,7 @@ LOGGING = {
 
     'loggers': {
         'dict_config_logger': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file_logs'],
             'level': 'INFO',
             'propagate': True,
         },
@@ -156,6 +158,12 @@ LOGGING = {
             'stream': sys.stdout,
             'formatter': 'simpleRe',
         },
+        'file_logs': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/opt/app/openlxp-xia-edx/core/management/logs/debug.log',
+        },
+
     },
 
     'formatters': {
