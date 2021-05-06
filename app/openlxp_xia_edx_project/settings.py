@@ -154,9 +154,11 @@ LOGGING = {
             'formatter': 'simpleRe',
         },
         'file_logs': {
-            'level': 'DEBUG',
+            'level': 'WARNING',
             'class': 'logging.FileHandler',
-            'filename': '/opt/app/openlxp-xia-edx/core/management/logs/debug.log',
+            'filename': '/opt/app/openlxp-xia-edx/core/management/logs/debug'
+                        '.log',
+            'formatter': 'simpleRe',
         },
 
     },
