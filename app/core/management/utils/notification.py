@@ -113,7 +113,7 @@ def send_notifications(email, sender):
     # Add a header to tell the email client to treat this part as an
     # attachment, and to give the attachment a name.
     att.add_header('Content-Disposition', 'attachment',
-                   filename="Please check attachment here")
+                   filename="OpenLXP notifications ")
 
     # Attach the multipart/alternative child container to the multipart/mixed
     # parent container.
