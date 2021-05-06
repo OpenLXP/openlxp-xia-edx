@@ -2,7 +2,6 @@ import json
 import logging
 
 import requests
-from django.core.mail import EmailMessage
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
@@ -12,8 +11,9 @@ from core.management.utils.notification import (delete_verified_email,
                                                 send_notifications)
 from core.management.utils.xia_internal import get_publisher_detail
 from core.management.utils.xis_client import response_from_xis
-from core.models import (DeleteEmailConfiguration, EmailConfiguration,
+from core.models import (DeleteEmailConfiguration, ReceiverEmailConfiguration,
                          MetadataLedger, SenderEmailConfiguration)
+from rest_framework import request
 
 logger = logging.getLogger('dict_config_logger')
 
@@ -102,10 +102,12 @@ def check_records_to_load_into_xis():
 def send_log_email():
     """ function to send emails of log file to personas"""
 
-    # getting email id to send email to personas
-    email_data = EmailConfiguration.objects.first()
-    email = email_data.email_address
+    # # getting email id to send email to personas
+#    email_data = ReceiverEmailConfiguration.objects.filter(id__in=[answer.id for answer in answer_set.answers.all()]).values_list('column_name', flat=True)
 
+    email_data = ReceiverEmailConfiguration.objects.values_list('email_address',
+                                                               flat=True)
+    email = list(email_data)
     # Getting sender email id
     sender_email_configuration = SenderEmailConfiguration.objects.first()
     sender = sender_email_configuration.sender_email_address

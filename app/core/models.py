@@ -42,16 +42,25 @@ class XIAConfiguration(models.Model):
         return super(XIAConfiguration, self).save(*args, **kwargs)
 
 
-class EmailConfiguration(models.Model):
+class ReceiverEmailConfiguration(models.Model):
     """Model for Email Configuration """
 
     email_address = models.EmailField(
         max_length=254,
-        help_text='Enter email personas addresses to send log data')
+        help_text='Enter email personas addresses to send log data',
+        unique=True)
+
+    def get_absolute_url(self):
+        """ URL for displaying individual model records."""
+        return reverse('Configuration-detail', args=[str(self.id)])
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return f'{self.id}'
 
     def save(self, *args, **kwargs):
         email_verification(self.email_address)
-        return super(EmailConfiguration, self).save(*args, **kwargs)
+        return super(ReceiverEmailConfiguration, self).save(*args, **kwargs)
 
 
 class DeleteEmailConfiguration(models.Model):

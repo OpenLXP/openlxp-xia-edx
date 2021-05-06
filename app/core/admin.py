@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (DeleteEmailConfiguration, EmailConfiguration,
+from .models import (DeleteEmailConfiguration, ReceiverEmailConfiguration,
                      SenderEmailConfiguration, XIAConfiguration)
 
 # Register your models here.
@@ -19,8 +19,8 @@ class XIAConfigurationAdmin(admin.ModelAdmin):
               'target_metadata_schema']
 
 
-@admin.register(EmailConfiguration)
-class EmailConfigurationAdmin(admin.ModelAdmin):
+@admin.register(ReceiverEmailConfiguration)
+class ReceiverEmailConfigurationAdmin(admin.ModelAdmin):
     list_display = ('email_address',)
 
 

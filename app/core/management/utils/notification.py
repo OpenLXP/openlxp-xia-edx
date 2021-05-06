@@ -61,7 +61,7 @@ def send_notifications(email, sender):
     RECIPIENT = email
 
     # The subject line for the email.
-    SUBJECT = "Customer service contact info"
+    SUBJECT = "Metadata notifications from Openlxp"
 
     # The full path to the file that will be attached to the email.
     ATTACHMENT = '/opt/app/openlxp-xia-edx/core/management/logs/debug.log'
@@ -92,7 +92,7 @@ def send_notifications(email, sender):
     # Add subject, from and to lines.
     msg['Subject'] = SUBJECT
     msg['From'] = SENDER
-    msg['To'] = RECIPIENT
+    msg['To'] = ', '.join(RECIPIENT)
 
     # Create a multipart/alternative child container.
     msg_body = MIMEMultipart('alternative')
@@ -126,9 +126,8 @@ def send_notifications(email, sender):
         # Provide the contents of the email.
         response = client.send_raw_email(
             Source=SENDER,
-            Destinations=[
-                RECIPIENT
-            ],
+            Destinations=RECIPIENT
+            ,
             RawMessage={
                 'Data': msg.as_string(),
             }
