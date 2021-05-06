@@ -2,16 +2,18 @@ import json
 import logging
 
 import requests
+from django.core.mail import EmailMessage
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 from django.utils import timezone
 
+from core.management.utils.notification import (delete_verified_email,
+                                                send_notifications)
 from core.management.utils.xia_internal import get_publisher_detail
 from core.management.utils.xis_client import response_from_xis
-from core.management.utils.notification import send_notifications
-from core.models import MetadataLedger, EmailConfiguration
-from django.core.mail import EmailMessage
+from core.models import (DeleteEmailConfiguration, EmailConfiguration,
+                         MetadataLedger, SenderEmailConfiguration)
 
 logger = logging.getLogger('dict_config_logger')
 
@@ -98,9 +100,23 @@ def check_records_to_load_into_xis():
 
 
 def send_log_email():
+    """ function to send emails of log file to personas"""
+
+    # getting email id to send email to personas
     email_data = EmailConfiguration.objects.first()
     email = email_data.email_address
-    send_notifications(email)
+
+    # Getting sender email id
+    sender_email_configuration = SenderEmailConfiguration.objects.first()
+    sender = sender_email_configuration.sender_email_address
+    send_notifications(email, sender)
+
+    # Getting email id to delete it from verified email list
+    delete_email_data = DeleteEmailConfiguration.objects.first()
+    email_to_delete = delete_email_data.delete_email_address
+
+    if email_to_delete:
+        delete_verified_email(email_to_delete)
 
 
 class Command(BaseCommand):

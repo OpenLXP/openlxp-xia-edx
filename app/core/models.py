@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.forms import ValidationError
 from django.urls import reverse
+
 from core.management.utils.notification import email_verification
 
 
@@ -51,6 +52,31 @@ class EmailConfiguration(models.Model):
     def save(self, *args, **kwargs):
         email_verification(self.email_address)
         return super(EmailConfiguration, self).save(*args, **kwargs)
+
+
+class DeleteEmailConfiguration(models.Model):
+    """Model for Delete Email Configuration """
+
+    delete_email_address = models.EmailField(
+        max_length=254,
+        help_text='Enter email address of personas to who no longer want to '
+                  'receive the log emails')
+
+
+class SenderEmailConfiguration(models.Model):
+    """Model for Email Configuration """
+
+    sender_email_address = models.EmailField(
+        max_length=254,
+        help_text='Enter sender email address to send log data from',
+        default='openlxphost@gmail.com')
+
+    def save(self, *args, **kwargs):
+        if not self.pk and SenderEmailConfiguration.objects.exists():
+            raise ValidationError('There is can be only one '
+                                  'SenderEmailConfiguration instance')
+        return super(SenderEmailConfiguration, self).save(*args, **kwargs)
+
 
 class MetadataLedger(models.Model):
     """Model for MetadataLedger """
