@@ -11,9 +11,9 @@ from core.management.utils.notification import (delete_verified_email,
                                                 send_notifications)
 from core.management.utils.xia_internal import get_publisher_detail
 from core.management.utils.xis_client import response_from_xis
-from core.models import (DeleteEmailConfiguration, ReceiverEmailConfiguration,
-                         MetadataLedger, SenderEmailConfiguration)
-from rest_framework import request
+from core.models import (ReceiverEmailConfiguration, MetadataLedger,
+                         SenderEmailConfiguration)
+# from rest_framework import request
 
 logger = logging.getLogger('dict_config_logger')
 
@@ -102,23 +102,16 @@ def check_records_to_load_into_xis():
 def send_log_email():
     """ function to send emails of log file to personas"""
 
-    # # getting email id to send email to personas
-#    email_data = ReceiverEmailConfiguration.objects.filter(id__in=[answer.id for answer in answer_set.answers.all()]).values_list('column_name', flat=True)
+    # getting email id to send email to personas
 
-    email_data = ReceiverEmailConfiguration.objects.values_list('email_address',
-                                                               flat=True)
+    email_data = ReceiverEmailConfiguration.objects.values_list(
+        'email_address',
+        flat=True)
     email = list(email_data)
     # Getting sender email id
     sender_email_configuration = SenderEmailConfiguration.objects.first()
     sender = sender_email_configuration.sender_email_address
     send_notifications(email, sender)
-
-    # Getting email id to delete it from verified email list
-    delete_email_data = DeleteEmailConfiguration.objects.first()
-    email_to_delete = delete_email_data.delete_email_address
-
-    if email_to_delete:
-        delete_verified_email(email_to_delete)
 
 
 class Command(BaseCommand):

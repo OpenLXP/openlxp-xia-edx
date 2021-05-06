@@ -4,7 +4,8 @@ from django.db import models
 from django.forms import ValidationError
 from django.urls import reverse
 
-from core.management.utils.notification import email_verification
+from core.management.utils.notification import email_verification, \
+    delete_verified_email
 
 
 class XIAConfiguration(models.Model):
@@ -70,6 +71,10 @@ class DeleteEmailConfiguration(models.Model):
         max_length=254,
         help_text='Enter email address of personas to who no longer want to '
                   'receive the log emails')
+
+    def save(self, *args, **kwargs):
+        delete_verified_email(self.delete_email_address)
+        return super(DeleteEmailConfiguration, self).save(*args, **kwargs)
 
 
 class SenderEmailConfiguration(models.Model):

@@ -61,14 +61,14 @@ def send_notifications(email, sender):
     RECIPIENT = email
 
     # The subject line for the email.
-    SUBJECT = "Metadata notifications from Openlxp"
+    SUBJECT = "New Message From OpenLXP Portal"
 
     # The full path to the file that will be attached to the email.
     ATTACHMENT = '/opt/app/openlxp-xia-edx/core/management/logs/debug.log'
 
     # The email body for recipients with non-HTML email clients.
-    BODY_TEXT = "Hello,\r\nPlease see the attached file for a list of " \
-                "customers to contact."
+    # BODY_TEXT = "Hello,\r\nPlease check the attached file for Openlxp " \
+    #             "Notifications. "
 
     # The HTML body of the email.
     BODY_HTML = """\
@@ -76,7 +76,7 @@ def send_notifications(email, sender):
        <head></head>
        <body>
        <h1>Hello!</h1>
-       <p>Please see the attached file for a list of customers to contact.</p>
+       <p>Please check the attached file for OpenLXP Notifications</p>
        </body>
        </html>
        """
@@ -100,11 +100,11 @@ def send_notifications(email, sender):
     # Encode the text and HTML content and set the character encoding.
     # This step is necessary if you're sending a message with characters
     # outside the ASCII range.
-    textpart = MIMEText(BODY_TEXT.encode(CHARSET), 'plain', CHARSET)
+    # textpart = MIMEText(BODY_TEXT.encode(CHARSET), 'plain', CHARSET)
     htmlpart = MIMEText(BODY_HTML.encode(CHARSET), 'html', CHARSET)
 
     # Add the text and HTML parts to the child container.
-    msg_body.attach(textpart)
+    # msg_body.attach(textpart)
     msg_body.attach(htmlpart)
 
     # Define the attachment part and encode it using MIMEApplication.
@@ -150,4 +150,4 @@ def delete_verified_email(email_to_delete):
         Identity=email_to_delete
     )
     logger.info('email got deleted')
-    print(response)
+    logger.info(response)
