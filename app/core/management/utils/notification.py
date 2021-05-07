@@ -9,29 +9,6 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger('dict_config_logger')
 
 
-def list_email_verified():
-    """function to return list of verified emails """
-    # Create SES client
-    ses = boto3.client('ses')
-
-    response = ses.list_identities(
-        IdentityType='EmailAddress',
-        MaxItems=10
-    )
-    logger.info(response['Identities'])
-    return response['Identities']
-
-
-def check_if_email_verified(email):
-    """Function to check if email id from user is verified """
-
-    list_emails = list_email_verified()
-    if email in list_emails:
-        logger.info("Email is already Verified")
-        return False
-    return True
-
-
 def email_verification(email):
     """Function to send email verification"""
 
@@ -47,6 +24,42 @@ def email_verification(email):
         )
 
         print(response)
+
+
+def check_if_email_verified(email):
+    """Function to check if email id from user is verified """
+
+    list_emails = list_email_verified()
+    if email in list_emails:
+        logger.info("Email is already Verified")
+        return False
+    return True
+
+
+def list_email_verified():
+    """function to return list of verified emails """
+    # Create SES client
+    ses = boto3.client('ses')
+
+    response = ses.list_identities(
+        IdentityType='EmailAddress',
+        MaxItems=10
+    )
+    logger.info(response['Identities'])
+    return response['Identities']
+
+
+def delete_verified_email(email_to_delete):
+    """Function to delete email verification"""
+
+    # Create SES client
+    ses = boto3.client('ses')
+
+    response = ses.delete_identity(
+        Identity=email_to_delete
+    )
+    logger.info('email got deleted')
+    logger.info(response)
 
 
 def send_notifications(email, sender):
@@ -138,16 +151,3 @@ def send_notifications(email, sender):
     else:
         print("Email sent! Message ID:"),
         print(response['MessageId'])
-
-
-def delete_verified_email(email_to_delete):
-    """Function to delete email verification"""
-
-    # Create SES client
-    ses = boto3.client('ses')
-
-    response = ses.delete_identity(
-        Identity=email_to_delete
-    )
-    logger.info('email got deleted')
-    logger.info(response)

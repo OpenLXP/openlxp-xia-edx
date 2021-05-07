@@ -11,8 +11,9 @@ from core.management.utils.notification import (delete_verified_email,
                                                 send_notifications)
 from core.management.utils.xia_internal import get_publisher_detail
 from core.management.utils.xis_client import response_from_xis
-from core.models import (ReceiverEmailConfiguration, MetadataLedger,
+from core.models import (MetadataLedger, ReceiverEmailConfiguration,
                          SenderEmailConfiguration)
+
 # from rest_framework import request
 
 logger = logging.getLogger('dict_config_logger')

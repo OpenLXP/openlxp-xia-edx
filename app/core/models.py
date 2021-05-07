@@ -4,8 +4,8 @@ from django.db import models
 from django.forms import ValidationError
 from django.urls import reverse
 
-from core.management.utils.notification import email_verification, \
-    delete_verified_email
+from core.management.utils.notification import (delete_verified_email,
+                                                email_verification)
 
 
 class XIAConfiguration(models.Model):
