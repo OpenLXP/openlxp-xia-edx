@@ -6,15 +6,11 @@ from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 from django.utils import timezone
-
-from core.management.utils.notification import (delete_verified_email,
-                                                send_notifications)
 from core.management.utils.xia_internal import get_publisher_detail
 from core.management.utils.xis_client import response_from_xis
 from core.models import (MetadataLedger, ReceiverEmailConfiguration,
                          SenderEmailConfiguration)
 
-# from rest_framework import request
 
 logger = logging.getLogger('dict_config_logger')
 
@@ -100,20 +96,6 @@ def check_records_to_load_into_xis():
         post_data_to_xis(data)
 
 
-def send_log_email():
-    """ function to send emails of log file to personas"""
-
-    # getting email id to send email to personas
-
-    email_data = ReceiverEmailConfiguration.objects.values_list(
-        'email_address',
-        flat=True)
-    email = list(email_data)
-    # Getting sender email id
-    sender_email_configuration = SenderEmailConfiguration.objects.first()
-    sender = sender_email_configuration.sender_email_address
-    send_notifications(email, sender)
-
 
 class Command(BaseCommand):
     """Django command to load metadata in the Experience Index Service (XIS)"""
@@ -121,4 +103,3 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Metadata is load from XIA Metadata_Ledger to XIS Metadata_Ledger"""
         check_records_to_load_into_xis()
-        send_log_email()
