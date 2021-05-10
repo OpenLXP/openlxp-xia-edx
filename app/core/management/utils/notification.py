@@ -135,7 +135,7 @@ def send_notifications(email, sender):
             )
         # Display an error if something goes wrong.
         except ClientError as e:
-            logger.error(e.response['Error']['Message'])
+            logger.info(e.response['Error']['Message'])
         else:
             logger.info("Email sent! Message ID:"),
             logger.info(response['MessageId'])
