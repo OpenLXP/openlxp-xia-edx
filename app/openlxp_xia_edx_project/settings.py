@@ -98,6 +98,20 @@ REST_FRAMEWORK = {
 
 EMAIL_BACKEND = 'django_ses.SESBackend'
 
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIT_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = os.environ.get('DJANGO_SUPERUSER_EMAIL')
+# EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
+
+# EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
+# EMAIL_HOST = 'email-smtp.us-east-1.amazonaws.com'
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 465
+# EMAIL_HOST_USER = 'openlxphost@gmail.com'
+# EMAIL_HOST_PASSWORD = '&#e@ltumAROslSwEm&B2'
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 

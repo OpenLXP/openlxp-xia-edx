@@ -6,11 +6,11 @@ from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 from django.utils import timezone
+
 from core.management.utils.xia_internal import get_publisher_detail
 from core.management.utils.xis_client import response_from_xis
 from core.models import (MetadataLedger, ReceiverEmailConfiguration,
                          SenderEmailConfiguration)
-
 
 logger = logging.getLogger('dict_config_logger')
 
@@ -94,7 +94,6 @@ def check_records_to_load_into_xis():
                     "available in XIA to transmit")
     else:
         post_data_to_xis(data)
-
 
 
 class Command(BaseCommand):
