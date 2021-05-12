@@ -17,7 +17,6 @@ from core.management.utils.xia_internal import (dict_flatten,
                                                 update_flattened_object)
 from core.management.utils.xis_client import get_xis_api_endpoint
 from core.management.utils.xsr_client import (get_xsr_api_endpoint,
-                                              get_xsr_api_response,
                                               read_source_file)
 from core.management.utils.xss_client import (
     get_aws_bucket_name, get_required_fields_for_validation,
@@ -350,11 +349,6 @@ class UtilsTests(TestSetUp):
         """Test to check if XSR endpoint is present"""
         result_xsr_endpoint = get_xsr_api_endpoint()
         self.assertTrue(result_xsr_endpoint)
-
-    def test_get_xsr_api_response(self):
-        """Test to Function to get api response from xsr endpoint"""
-        result_xsr_api_response = get_xsr_api_response()
-        self.assertTrue(result_xsr_api_response)
 
     @patch('core.management.utils.xsr_client.extract_source',
            return_value=dict({1: {'a': 'b'}}))

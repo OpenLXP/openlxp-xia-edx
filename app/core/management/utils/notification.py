@@ -127,8 +127,7 @@ def send_notifications(email, sender):
             # Provide the contents of the email.
             response = ses.send_raw_email(
                 Source=SENDER,
-                Destinations=[each_recipient]
-                ,
+                Destinations=[each_recipient],
                 RawMessage={
                     'Data': msg.as_string(),
                 }
