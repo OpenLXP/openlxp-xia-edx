@@ -127,15 +127,15 @@ def send_notifications(email, sender):
             # Provide the contents of the email.
             response = ses.send_raw_email(
                 Source=SENDER,
-                Destinations=[each_recipient]
-                ,
+                Destinations=[each_recipient],
                 RawMessage={
                     'Data': msg.as_string(),
                 }
             )
         # Display an error if something goes wrong.
         except ClientError as e:
-            logger.info(e.response['Error']['Message'])
+            logger.error(e.response['Error']['Message'])
+            continue
         else:
             logger.info("Email sent! Message ID:"),
             logger.info(response['MessageId'])
