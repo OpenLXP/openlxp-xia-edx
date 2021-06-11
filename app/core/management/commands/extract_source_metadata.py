@@ -3,7 +3,6 @@ import logging
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from django.conf import settings
 
 from core.management.utils.xia_internal import (get_publisher_detail,
                                                 get_source_metadata_key_value)
@@ -11,8 +10,6 @@ from core.management.utils.xsr_client import read_source_file
 from core.models import MetadataLedger
 
 logger = logging.getLogger('dict_config_logger')
-file_handler = logging.FileHandler(getattr(settings, "LOG_PATH", None),
-                                   mode='w')
 
 
 def get_source_metadata():
