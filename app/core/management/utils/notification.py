@@ -1,14 +1,13 @@
 import logging
 from email.mime.application import MIMEApplication
-from django.http import HttpResponse
-from django.conf import settings
-
-from django.core.mail import EmailMessage
 
 import boto3
 from botocore.exceptions import ClientError
+from django.conf import settings
+from django.core.mail import EmailMessage
 
 logger = logging.getLogger('dict_config_logger')
+
 # Create SES client
 ses = boto3.client('ses')
 
@@ -49,16 +48,6 @@ def list_email_verified():
     return response['Identities']
 
 
-def delete_verified_email(email_to_delete):
-    """Function to delete email verification"""
-
-    response = ses.delete_identity(
-        Identity=email_to_delete
-    )
-    logger.info('email got deleted')
-    logger.info(response)
-
-
 def send_notifications(email, sender):
     """This function sends email of a log file """
 
@@ -66,11 +55,9 @@ def send_notifications(email, sender):
     # Replace sender@example.com with your "From" address.
     # This address must be verified with Amazon SES.
     SENDER = sender
-
     # Replace recipient@example.com with a "To" address. If your account
     # is still in the sandbox, this address must be verified.
     RECIPIENT = email
-
     # The subject line for the email.
     SUBJECT = "New Message From OpenLXP Portal"
 
@@ -105,7 +92,9 @@ def send_notifications(email, sender):
             mail.content_subtype = "html"
             # Add the attachment to the parent container.
             mail.attach(att)
-            res = mail.send()
+            mail.send()
+            logging.FileHandler(getattr(settings, "LOG_PATH", None),
+                                mode='w')
         # Display an error if something goes wrong.
         except ClientError as e:
             logger.error(e.response['Error']['Message'])

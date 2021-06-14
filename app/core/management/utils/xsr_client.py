@@ -1,29 +1,34 @@
 import json
 import logging
-import os
 
 import pandas as pd
 import requests
+
+from core.models import XSRConfiguration
 
 logger = logging.getLogger('dict_config_logger')
 
 
 def get_xsr_api_endpoint():
-    """Setting API endpoint from XIA and XIS communication """
-    xsr_endpoint = os.environ.get('XSR_API_ENDPOINT')
-    return xsr_endpoint
+    """Retrieve xis_api_endpoint from XSR configuration """
+    logger.debug("Retrieve xsr_api_endpoint from XIS configuration")
+    xsr_data = XSRConfiguration.objects.first()
+    xsr_api_endpoint = xsr_data.xsr_api_endpoint
+    return xsr_api_endpoint
 
 
 def token_generation_for_api_endpoint():
     """Function connects to edX domain using client id and secret and returns
     the access token"""
+    xsr_data = XSRConfiguration.objects.first()
 
-    payload = "grant_type=client_credentials&client_id=" + os.environ.get(
-        'EDX_CLIENT_ID') + "&client_secret=" + os.environ.get(
-        'EDX_CLIENT_SECRET') + "&token_type=JWT"
+    payload = "grant_type=client_credentials&client_id=" \
+              + xsr_data.edx_client_id + "&client_secret=" \
+              + xsr_data.edx_client_secret + "&token_type=JWT"
     headers = {'content-type': "application/x-www-form-urlencoded"}
-    xis_response = requests.post(url=os.environ.get('TOKEN_URL'),
+    xis_response = requests.post(url=xsr_data.token_url,
                                  data=payload, headers=headers)
+
     data = xis_response.json()
     return data['access_token']
 
@@ -69,5 +74,8 @@ def read_source_file():
     # Changing null values to None for source dataframe
     std_source_df = source_df.where(pd.notnull(source_df),
                                     None)
+    #  Creating list of dataframes of sources
+    source_list = [std_source_df]
+
     logger.debug("Sending source data in dataframe format for EVTVL")
-    return std_source_df
+    return source_list

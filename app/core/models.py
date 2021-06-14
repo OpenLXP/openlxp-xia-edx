@@ -4,8 +4,7 @@ from django.db import models
 from django.forms import ValidationError
 from django.urls import reverse
 
-from core.management.utils.notification import (delete_verified_email,
-                                                email_verification)
+from core.management.utils.notification import email_verification
 
 
 class XIAConfiguration(models.Model):
@@ -43,6 +42,40 @@ class XIAConfiguration(models.Model):
         return super(XIAConfiguration, self).save(*args, **kwargs)
 
 
+class XISConfiguration(models.Model):
+    """Model for XIS Configuration """
+
+    xis_api_endpoint = models.CharField(
+        help_text='Enter the XIS API endpoint',
+        max_length=200
+    )
+
+    def save(self, *args, **kwargs):
+        if not self.pk and XISConfiguration.objects.exists():
+            raise ValidationError('There can be only one XISConfiguration '
+                                  'instance')
+        return super(XISConfiguration, self).save(*args, **kwargs)
+
+
+class XSRConfiguration(models.Model):
+    """Model for XSR Configuration """
+
+    xsr_api_endpoint = models.CharField(
+        help_text='Enter the XSR API endpoint', max_length=200)
+    token_url = models.CharField(
+        help_text='Enter the token URL for edX', max_length=200)
+    edx_client_id = models.CharField(
+        help_text='Enter the edX client ID', max_length=200)
+    edx_client_secret = models.CharField(
+        help_text='Enter the edX client secret', max_length=500)
+
+    def save(self, *args, **kwargs):
+        if not self.pk and XSRConfiguration.objects.exists():
+            raise ValidationError('There can be only one XISConfiguration '
+                                  'instance')
+        return super(XSRConfiguration, self).save(*args, **kwargs)
+
+
 class ReceiverEmailConfiguration(models.Model):
     """Model for Email Configuration """
 
@@ -62,19 +95,6 @@ class ReceiverEmailConfiguration(models.Model):
     def save(self, *args, **kwargs):
         email_verification(self.email_address)
         return super(ReceiverEmailConfiguration, self).save(*args, **kwargs)
-
-
-class DeleteEmailConfiguration(models.Model):
-    """Model for Delete Email Configuration """
-
-    delete_email_address = models.EmailField(
-        max_length=254,
-        help_text='Enter email address of personas to who no longer want to '
-                  'receive the log emails')
-
-    def save(self, *args, **kwargs):
-        delete_verified_email(self.delete_email_address)
-        return super(DeleteEmailConfiguration, self).save(*args, **kwargs)
 
 
 class SenderEmailConfiguration(models.Model):
