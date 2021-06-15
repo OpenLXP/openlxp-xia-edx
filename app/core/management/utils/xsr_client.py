@@ -1,38 +1,43 @@
 import json
 import logging
-import os
 
 import pandas as pd
 import requests
+
+from core.models import XSRConfiguration
 
 logger = logging.getLogger('dict_config_logger')
 
 
 def get_xsr_api_endpoint():
-    """Setting API endpoint from XIA and XIS communication """
-    xsr_endpoint = os.environ.get('XSR_API_ENDPOINT')
-    return xsr_endpoint
+    """Retrieve xis_api_endpoint from XSR configuration """
+    logger.debug("Retrieve xsr_api_endpoint from XIS configuration")
+    xsr_data = XSRConfiguration.objects.first()
+    xsr_api_endpoint = xsr_data.xsr_api_endpoint
+    return xsr_api_endpoint
 
 
 def token_generation_for_api_endpoint():
     """Function connects to edX domain using client id and secret and returns
     the access token"""
+    xsr_data = XSRConfiguration.objects.first()
 
-    payload = "grant_type=client_credentials&client_id=" + os.environ.get(
-        'EDX_CLIENT_ID') + "&client_secret=" + os.environ.get(
-        'EDX_CLIENT_SECRET') + "&token_type=JWT"
+    payload = "grant_type=client_credentials&client_id=" \
+              + xsr_data.edx_client_id + "&client_secret=" \
+              + xsr_data.edx_client_secret + "&token_type=JWT"
     headers = {'content-type': "application/x-www-form-urlencoded"}
-    xis_response = requests.post(url=os.environ.get('TOKEN_URL'),
+    xis_response = requests.post(url=xsr_data.token_url,
                                  data=payload, headers=headers)
+
     data = xis_response.json()
     return data['access_token']
 
 
-def get_xsr_api_response():
+def get_xsr_api_response(url):
     """Function to get api response from xsr endpoint"""
-    url = get_xsr_api_endpoint()
+
     # creating HTTP response object from given url
-    headers = {'Authorization': 'JWT '+token_generation_for_api_endpoint()}
+    headers = {'Authorization': 'JWT ' + token_generation_for_api_endpoint()}
     resp = requests.get(url, headers=headers, )
     return resp
 
@@ -40,11 +45,23 @@ def get_xsr_api_response():
 def extract_source():
     """Function to connect to edX endpoint API and get source metadata"""
 
-    resp = get_xsr_api_response()
+    logger.info("Retrieving data from source")
+    source_df_list = []
+    url = get_xsr_api_endpoint()
+    resp = get_xsr_api_response(url)
     source_data_dict = json.loads(resp.text)
 
-    logger.debug("Sending source data from endpoint API")
-    return source_data_dict['results']
+    while True:
+        source_df = pd.DataFrame(source_data_dict['results'])
+        source_df_list.append(source_df)
+        if not source_data_dict['next']:
+            source_df_final = pd.concat(source_df_list).reset_index(drop=True)
+            logger.debug("Completed retrieving data from source")
+            # return source_data_dict['results']
+            return source_df_final
+        else:
+            resp = get_xsr_api_response(source_data_dict['next'])
+            source_data_dict = json.loads(resp.text)
 
 
 def read_source_file():
@@ -52,13 +69,13 @@ def read_source_file():
     logger.info("Retrieving data from XSR")
 
     # Function call to extract data from source repository
-    xsr_items = extract_source()
-
-    # convert xsr dictionary list to Dataframe
-    source_df = pd.DataFrame(xsr_items)
+    source_df = extract_source()
 
     # Changing null values to None for source dataframe
     std_source_df = source_df.where(pd.notnull(source_df),
                                     None)
+    #  Creating list of dataframes of sources
+    source_list = [std_source_df]
+
     logger.debug("Sending source data in dataframe format for EVTVL")
-    return std_source_df
+    return source_list

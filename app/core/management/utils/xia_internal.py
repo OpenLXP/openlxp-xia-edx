@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import logging
 
@@ -221,3 +222,9 @@ def update_flattened_object(str_obj, prefix, flatten_dict):
     """function to update flattened object to dict variable"""
 
     flatten_dict.update({prefix: str_obj})
+
+
+def convert_date_to_isoformat(date):
+    if isinstance(date, datetime.datetime):
+        date = date.isoformat()
+    return date

@@ -25,4 +25,7 @@ requests~=2.25.1
 
 coverage>=5.5, < 5.6
 
-ddt
+ddt~=1.4.2
+
+django-ses
+botocore~=1.19.63
