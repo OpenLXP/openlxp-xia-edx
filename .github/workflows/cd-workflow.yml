@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - main
+      - feature/xia__package_implementation_edx
   pull_request:
     branches: 
       - main
