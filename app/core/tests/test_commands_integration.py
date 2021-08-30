@@ -1,9 +1,10 @@
 import logging
+from unittest.mock import patch
 
 import pandas as pd
 from ddt import ddt
 from django.test import tag
-from openlxp_xia.models import MetadataLedger, XIAConfiguration
+from openlxp_xia.models import MetadataLedger
 
 from core.management.commands.extract_source_metadata import (
     extract_metadata_using_key, store_source_metadata)
@@ -46,22 +47,25 @@ class CommandIntegration(TestSetUp):
     def test_extract_metadata_using_key(self):
         """Test for the keys and hash creation and save in
         Metadata_ledger table """
-        input_data = pd.DataFrame.from_dict([self.source_metadata])
-        xiaConfig = XIAConfiguration(publisher='edX')
-        xiaConfig.save()
-        extract_metadata_using_key(input_data)
-        result_query = MetadataLedger.objects.values(
-            'source_metadata_key',
-            'source_metadata_key_hash',
-            'source_metadata',
-            'source_metadata_hash',
-        ).filter(
-            source_metadata_key=self.key_value).first()
-        self.assertEqual(self.key_value, result_query.get(
-            'source_metadata_key'))
-        self.assertEqual(self.hash_value, result_query.get(
-            'source_metadata_hash'))
-        self.assertEqual(self.key_value_hash, result_query.get(
-            'source_metadata_key_hash'))
-        self.assertEqual(self.source_metadata, result_query.get(
-            'source_metadata'))
+
+        data = {1: self.source_metadata}
+        input_data = pd.DataFrame.from_dict(data, orient='index')
+        with patch('core.management.commands.extract_source_metadata'
+                   '.add_publisher_to_source',
+                   return_value=input_data):
+            extract_metadata_using_key(input_data)
+            result_query = MetadataLedger.objects.values(
+                'source_metadata_key',
+                'source_metadata_key_hash',
+                'source_metadata',
+                'source_metadata_hash',
+            ).filter(
+                source_metadata_key=self.key_value).first()
+            self.assertEqual(self.key_value, result_query.get(
+                'source_metadata_key'))
+            self.assertEqual(self.hash_value, result_query.get(
+                'source_metadata_hash'))
+            self.assertEqual(self.key_value_hash, result_query.get(
+                'source_metadata_key_hash'))
+            self.assertEqual(self.source_metadata, result_query.get(
+                'source_metadata'))

@@ -5,9 +5,8 @@ import logging
 import pandas as pd
 from django.core.management.base import BaseCommand
 from openlxp_xia.management.utils.xia_internal import (
-    convert_date_to_isoformat, get_publisher_detail,
-    type_cast_overwritten_values)
-from openlxp_xia.models import MetadataFieldOverwrite, MetadataLedger
+    convert_date_to_isoformat, get_publisher_detail)
+from openlxp_xia.models import MetadataLedger
 
 from core.management.utils.xsr_client import (get_source_metadata_key_value,
                                               read_source_file)
@@ -33,19 +32,6 @@ def get_source_metadata():
         extract_metadata_using_key(std_source_df)
 
 
-def get_metadata_fields_to_overwrite(metadata_df):
-    """looping through fields to be overwrite or appended"""
-    for each in MetadataFieldOverwrite.objects.all():
-        column = each.field_name
-        overwrite_flag = each.overwrite
-        # checking and converting type of overwritten values
-        value = type_cast_overwritten_values(each.field_type, each.field_value)
-
-        metadata_df = overwrite_append_metadata(metadata_df, column, value,
-                                                overwrite_flag)
-    return metadata_df
-
-
 def add_publisher_to_source(source_df):
     """Add publisher column to source metadata and return source metadata"""
 
@@ -56,31 +42,6 @@ def add_publisher_to_source(source_df):
     # Assign publisher column to source data
     source_df['SOURCESYSTEM'] = publisher
     return source_df
-
-
-def overwrite_append_metadata(metadata_df, column, value, overwrite_flag):
-    """Overwrite & append metadata fields based on overwrite flag """
-
-    # field should be overwritten and append
-    if overwrite_flag:
-        metadata_df[column] = value
-    # skip field to be overwritten and append
-    else:
-        if column not in metadata_df.columns:
-            metadata_df[column] = value
-        else:
-            metadata_df.loc[metadata_df[column].isnull(), column] = value
-    return metadata_df
-
-
-def overwrite_metadata_field(metadata_df):
-    """Overwrite & append metadata fields with admin entered values """
-    logger.info("Overwrite & append metadata fields with admin entered values")
-    # get metadata fields to be overwritten and appended and replace values
-    metadata_df = get_metadata_fields_to_overwrite(metadata_df)
-    # return source metadata as dictionary
-    source_data_dict = metadata_df.to_dict(orient='index')
-    return source_data_dict
 
 
 def store_source_metadata(key_value, key_value_hash, hash_value, metadata):
@@ -100,8 +61,7 @@ def extract_metadata_using_key(source_df):
     """Creating key, hash of key & hash of metadata """
     # Convert source data to dictionary and add publisher to metadata
     source_df = add_publisher_to_source(source_df)
-    # Overwrite & append metadata fields with admin entered values
-    source_data_dict = overwrite_metadata_field(source_df)
+    source_data_dict = source_df.to_dict(orient='index')
 
     logger.info('Setting record_status & deleted_date for updated record')
     logger.info('Getting existing records or creating new record to '
