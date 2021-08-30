@@ -93,7 +93,8 @@ DATABASES = {
         'PORT': 3306,
     }
 }
-DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
@@ -103,7 +104,6 @@ REST_FRAMEWORK = {
 }
 
 EMAIL_BACKEND = 'django_ses.SESBackend'
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
