@@ -4,13 +4,12 @@ import logging
 
 import pandas as pd
 from django.core.management.base import BaseCommand
-from django.utils import timezone
+from openlxp_xia.management.utils.xia_internal import (
+    convert_date_to_isoformat, get_publisher_detail)
+from openlxp_xia.models import MetadataLedger
 
-from core.management.utils.xia_internal import (convert_date_to_isoformat,
-                                                get_publisher_detail,
-                                                get_source_metadata_key_value)
-from core.management.utils.xsr_client import read_source_file
-from core.models import MetadataLedger
+from core.management.utils.xsr_client import (get_source_metadata_key_value,
+                                              read_source_file)
 
 logger = logging.getLogger('dict_config_logger')
 
@@ -42,26 +41,13 @@ def add_publisher_to_source(source_df):
         logger.warning("Publisher field is empty!")
     # Assign publisher column to source data
     source_df['SOURCESYSTEM'] = publisher
-    source_data_dict = source_df.to_dict(orient='index')
-    return source_data_dict
+    return source_df
 
 
 def store_source_metadata(key_value, key_value_hash, hash_value, metadata):
     """Extract data from Experience Source Repository(XSR)
         and store in metadata ledger
     """
-    # Setting record_status & deleted_date for updated record
-    MetadataLedger.objects.filter(
-        source_metadata_key_hash=key_value_hash,
-        record_lifecycle_status='Active').exclude(
-        source_metadata_hash=hash_value).update(
-        metadata_record_inactivation_date=timezone.now())
-    MetadataLedger.objects.filter(
-        source_metadata_key_hash=key_value_hash,
-        record_lifecycle_status='Active').exclude(
-        source_metadata_hash=hash_value).update(
-        record_lifecycle_status='Inactive')
-
     # Retrieving existing records or creating new record to MetadataLedger
     MetadataLedger.objects.get_or_create(
         source_metadata_key=key_value,
@@ -74,7 +60,8 @@ def store_source_metadata(key_value, key_value_hash, hash_value, metadata):
 def extract_metadata_using_key(source_df):
     """Creating key, hash of key & hash of metadata """
     # Convert source data to dictionary and add publisher to metadata
-    source_data_dict = add_publisher_to_source(source_df)
+    source_df = add_publisher_to_source(source_df)
+    source_data_dict = source_df.to_dict(orient='index')
 
     logger.info('Setting record_status & deleted_date for updated record')
     logger.info('Getting existing records or creating new record to '
