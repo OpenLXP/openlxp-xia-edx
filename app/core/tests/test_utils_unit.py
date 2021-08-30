@@ -1,11 +1,12 @@
 import hashlib
 import logging
 from unittest.mock import patch
+
 from ddt import data, ddt, unpack
 from django.test import tag
 
-from core.management.utils.xsr_client import get_xsr_api_endpoint, \
-    get_source_metadata_key_value
+from core.management.utils.xsr_client import (get_source_metadata_key_value,
+                                              get_xsr_api_endpoint)
 from core.models import XSRConfiguration
 
 from .test_setup import TestSetUp
