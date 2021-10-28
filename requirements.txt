@@ -48,6 +48,8 @@ django-celery-results >=2.1.0
 
 django-model-utils>=4.1.1,<4.2.0
 
-openlxp-xia >=1.1.2
+Pillow >=8.2.0
 
-openlxp-notification >=1.1.0
+openlxp-xia >=1.2.1
+
+openlxp-notification >=1.2.0
