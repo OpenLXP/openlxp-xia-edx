@@ -3,11 +3,10 @@ name: Docker CD
 on:
   push:
     branches: 
-      - main
-      - feature/xia__package_implementation_edx
+      - feature/sonarqube
   pull_request:
     branches: 
-      - main
+      - feature/sonarqube
 jobs:
   code-test:
 # Kicks off the workflow and prepares Github to run coverage test using a ubuntu-latest container.
@@ -28,6 +27,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r ./requirements.txt
 # Start running test scripts and generate the coverage report
+    - name: Sonarqube Scan
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+        - uses: sonarsource/sonarqube-scan-action@master
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            SONAR_HOST_URL: ${{ secrets. SONAR_HOST_URL }}
+        # If you wish to fail your job when the Quality Gate is red, uncomment the
+        # following lines. This would typically be used to fail a deployment.
+        # - uses: sonarsource/sonarqube-quality-gate-action@master
+        #   timeout-minutes: 5
+        #   env:
+        #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     - name: Generate Coverage Report
       env:
         GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
