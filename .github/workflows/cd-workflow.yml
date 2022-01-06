@@ -43,30 +43,19 @@ jobs:
         echo "Docker network successfully created"
         echo "Running coverage unit test"
         docker-compose --env-file ./.env run app_xia_edx sh -c "python manage.py waitdb && coverage run manage.py test --tag=unit && flake8 && coverage report && coverage report --fail-under=80"
-# Commenting this step for now. 
-#    - name: Upload Coverage to Codecov
-#      uses: codecov/codecov-action@v1
-#      with:
-#        fail_ci_if_error: true
-#        path_to_write_report: ./coverage/codecov_report.txt
 
   sonar-scan:
-    name: Sonarqube Scan
+    name: Sonarcloud Scan
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - uses: sonarsource/sonarqube-scan-action@master
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      # - uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
   build:
     # requires dependency from step above
