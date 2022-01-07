@@ -44,6 +44,7 @@ jobs:
         echo "Running coverage unit test"
         docker-compose --env-file ./.env run app_xia_edx sh -c "python manage.py waitdb && coverage run manage.py test --tag=unit && flake8 && coverage report && coverage report --fail-under=80"
 
+
 #  sonar-scan:
 #    name: Sonarcloud Scan
 #    runs-on: ubuntu-latest
