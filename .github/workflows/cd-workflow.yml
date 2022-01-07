@@ -3,10 +3,10 @@ name: Docker CD
 on:
   push:
     branches: 
-      - feature/sonarqube
+      - main
   pull_request:
     branches: 
-      - feature/sonarqube
+      - main
 jobs:
   code-test:
 # Kicks off the workflow and prepares Github to run coverage test using a ubuntu-latest container.
