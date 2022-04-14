@@ -24,8 +24,13 @@ class TestSetUp(TestCase):
         }
 
         self.key_value = "TestData 123_edX"
-        self.key_value_hash = "f1f0c8c3b622b58eddd8d6fa8555d994"
-        self.hash_value = "07d12a959d362659fd14ed7bdbed5024"
+        self.key_value_hash = "4c8861e7efb81630d6f1c3aa76cc757c03c3" \
+                              "31e17aff8cb3ec6211c7f97760ddc3d6a5ea459" \
+                              "a72ac8f4e07774f572b5344bed121b6ca7f58c38b885" \
+                              "dc0adc138"
+        self.hash_value = "9611b484a2165644bd9101691a9b0226d357a35a01" \
+                          "2125612e477b9ea61e07ffcd942b538756eef4dbc71b05" \
+                          "6ff35545456e195e30f5af6892c698e50ecf5417"
 
         self.test_data = {
             "key1": ["val1"],
