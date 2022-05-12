@@ -53,13 +53,16 @@ def extract_source():
     resp = get_xsr_api_response(url)
     source_data_dict = json.loads(resp.text)
 
+    page = 1
+
     while True:
+        logger.info("Retrieving data from source page " + str(page))
         source_df = pd.DataFrame(source_data_dict['results'])
         source_df_list.append(source_df)
+        page = page + 1
         if not source_data_dict['next']:
             source_df_final = pd.concat(source_df_list).reset_index(drop=True)
-            logger.debug("Completed retrieving data from source")
-            # return source_data_dict['results']
+            logger.info("Completed retrieving data from source")
             return source_df_final
         else:
             resp = get_xsr_api_response(source_data_dict['next'])
@@ -73,11 +76,8 @@ def read_source_file():
     # Function call to extract data from source repository
     source_df = extract_source()
 
-    # Changing null values to None for source dataframe
-    std_source_df = source_df.where(pd.notnull(source_df),
-                                    None)
     #  Creating list of dataframes of sources
-    source_list = [std_source_df]
+    source_list = [source_df]
 
     logger.debug("Sending source data in dataframe format for EVTVL")
     return source_list
@@ -93,13 +93,14 @@ def get_source_metadata_key_value(data_dict):
         if not data_dict.get(item):
             logger.info('Field name ' + item + ' is missing for '
                                                'key creation')
+            return None
         field_values.append(data_dict.get(item))
 
     # Key value creation for source metadata
     key_value = '_'.join(field_values)
 
     # Key value hash creation for source metadata
-    key_value_hash = hashlib.md5(key_value.encode('utf-8')).hexdigest()
+    key_value_hash = hashlib.sha512(key_value.encode('utf-8')).hexdigest()
 
     # Key dictionary creation for source metadata
     key = get_key_dict(key_value, key_value_hash)
