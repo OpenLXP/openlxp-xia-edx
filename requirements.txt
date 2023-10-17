@@ -44,7 +44,7 @@ numpy>=1.21.1
 
 openlxp-notification==1.3.7
 
-openlxp-xia >=1.4.2, <1.5.0
+openlxp-xia ==1.4.5
 
 openpyxl >=3.0.7 , <3.1.0
 
